@@ -46,7 +46,7 @@ Pages that I will have:
   - ElectMagn
   - StatMech
 - CompSciNotes >
-  - Principles
+  - Principles (csci 1010, 2010, basic theory from matlab resources)
   - NumericalAnalysis
   - DataAnalysis
   - ComputationalPhys
