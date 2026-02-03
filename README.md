@@ -1,4 +1,4 @@
-# MathNotes
+# CompSciNotes
 location for all my computational science notes from numerical analysis to high performance computing
 to be implemented after/during spring 2027
 
@@ -7,7 +7,7 @@ plan:
 - adjust navbar dropdown to reveal links:
   - CircuitNotes
   - MathNotes
-  - PhysicsNotes
+  - PhysNotes
   - CompSciNotes
   - Independent Research 
 -  and when you hover over one of them:
@@ -38,7 +38,7 @@ Pages that I will have:
   - CalculusII
   - CalculusIII
   - DiffEqu
-- PhysicsNotes >
+- PhysNotes >
   - Introduction (uni 1 and uni 2 basics)
   - ModernPhys
   - ClassicalMech
