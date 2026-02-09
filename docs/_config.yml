@@ -1,7 +1,7 @@
 
 # Site Metadata
 name: ""
-title: Thomas Campagna - CircuitNotes
+title: Thomas Campagna - CompSciNotes
 email: thmscmpgn@gmail.com
 description: >-
   Comprehensive computer science notes: covering programming, algorithms, data structures, and more. A resource for students by a student.
@@ -11,7 +11,7 @@ timezone: America/Chicago
 
 # Deployment Settings
 url: "https://THMSCMPG.github.io"
-baseurl: "/CircuitNotes"
+baseurl: "/CompSciNotes"
 
 # Build Settings
 markdown: kramdown
@@ -79,5 +79,5 @@ defaults:
   - scope:
       path: ""
     values:
-      layout: "CircuitNotes"
+      layout: "CompSciNotes"
       author: "Thomas Campagna"
