@@ -1,0 +1,71 @@
+---
+layout: CompSciNotes
+title: Computational Physics
+subtitle: Numerical Methods for Physical Systems
+---
+
+<div class="section">
+<h2>⚛️ Molecular Dynamics</h2>
+
+<div class="theory-box">
+<h4>Newton's Equations of Motion</h4>
+<p>For particle i: F_i = m_i a_i = -∇V_i</p>
+<p><strong>Velocity Verlet Algorithm:</strong></p>
+<pre><code>v(t+dt/2) = v(t) + a(t)·dt/2
+r(t+dt) = r(t) + v(t+dt/2)·dt
+a(t+dt) = F(t+dt)/m
+v(t+dt) = v(t+dt/2) + a(t+dt)·dt/2</code></pre>
+<p>Time-reversible, symplectic integrator preserving phase space volume</p>
+</div>
+
+<div class="component-card">
+<h4>Lennard-Jones Potential</h4>
+<div class="formula">V(r) = 4ε[(σ/r)¹² - (σ/r)⁶]</div>
+<p>Models van der Waals interactions<br>
+σ = collision diameter, ε = well depth</p>
+</div>
+</div>
+
+<div class="section">
+<h2>🌊 Finite Element Method</h2>
+
+<div class="theory-box">
+<h4>Weak Formulation</h4>
+<p>Convert PDE to variational problem: find u ∈ V such that</p>
+<div class="formula">a(u,v) = L(v) ∀v ∈ V</div>
+<p>Discretize into finite-dimensional subspace, solve linear system</p>
+</div>
+
+<div class="component-card">
+<h4>Applications</h4>
+<ul>
+<li>Structural mechanics (stress analysis)</li>
+<li>Heat transfer problems</li>
+<li>Electromagnetics</li>
+<li>Fluid dynamics</li>
+</ul>
+</div>
+</div>
+
+<div class="section">
+<h2>📊 Monte Carlo Methods</h2>
+
+<div class="component-grid">
+<div class="component-card">
+<h4>Metropolis Algorithm</h4>
+<pre><code>1. Generate trial configuration
+2. Calculate ΔE = E_new - E_old
+3. Accept if ΔE < 0
+4. If ΔE > 0, accept with P = exp(-ΔE/kT)</code></pre>
+<p>Samples Boltzmann distribution</p>
+</div>
+
+<div class="component-card">
+<h4>Applications</h4>
+<p><strong>Ising Model:</strong> Ferromagnetism<br>
+<strong>Path Integrals:</strong> Quantum systems<br>
+<strong>MCMC:</strong> Bayesian inference<br>
+<strong>Integration:</strong> High-dimensional integrals</p>
+</div>
+</div>
+</div>

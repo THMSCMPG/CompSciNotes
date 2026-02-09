@@ -1,0 +1,84 @@
+---
+layout: CompSciNotes
+title: Fortran
+subtitle: High-Performance Scientific Computing
+---
+
+<div class="section">
+<h2>💪 Fortran Fundamentals</h2>
+
+<div class="theory-box">
+<h4>Modern Fortran Features</h4>
+<p>Fortran remains dominant in HPC for scientific computing due to:</p>
+<ul>
+<li>Array operations and vectorization</li>
+<li>Mature optimization in compilers</li>
+<li>Built-in support for complex numbers</li>
+<li>Efficient memory layout (column-major)</li>
+</ul>
+</div>
+
+<div class="component-card">
+<h4>Basic Syntax</h4>
+<pre><code>program example
+  implicit none
+  integer :: i, n = 100
+  real(8), dimension(n) :: x, y, z
+  
+  ! Array operations
+  x = [(i*1.0, i=1,n)]
+  y = 2.0 * x
+  z = x + y
+  
+  ! Matrix multiplication
+  real(8), dimension(n,n) :: A, B, C
+  C = matmul(A, B)
+end program</code></pre>
+</div>
+</div>
+
+<div class="section">
+<h2>🔄 Modules and Procedures</h2>
+
+<div class="component-card">
+<h4>Module Example</h4>
+<pre><code>module physics_constants
+  implicit none
+  real(8), parameter :: c = 2.998e8  ! speed of light
+  real(8), parameter :: hbar = 1.055e-34
+contains
+  function energy(mass) result(E)
+    real(8), intent(in) :: mass
+    real(8) :: E
+    E = mass * c**2
+  end function
+end module</code></pre>
+</div>
+</div>
+
+<div class="section">
+<h2>⚡ Performance Features</h2>
+
+<div class="component-grid">
+<div class="component-card">
+<h4>Array Operations</h4>
+<pre><code>! Elemental operations (vectorized)
+y = sin(x) + exp(-x**2)
+
+! WHERE construct
+where (x > 0)
+  y = log(x)
+elsewhere
+  y = 0.0
+end where</code></pre>
+</div>
+
+<div class="component-card">
+<h4>DO CONCURRENT</h4>
+<pre><code>do concurrent (i=1:n)
+  a(i) = sqrt(b(i)**2 + c(i)**2)
+end do</code></pre>
+<p>Compiler can parallelize iterations</p>
+</div>
+</div>
+</div>

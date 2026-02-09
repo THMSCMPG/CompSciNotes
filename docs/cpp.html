@@ -1,0 +1,65 @@
+---
+layout: CompSciNotes
+title: C++
+subtitle: Systems Programming and Performance
+---
+
+<div class="section">
+<h2>🎯 Modern C++ Features</h2>
+
+<div class="component-card">
+<h4>Smart Pointers (C++11/14)</h4>
+<pre><code>#include <memory>
+
+std::unique_ptr<int> p1 = std::make_unique<int>(42);
+std::shared_ptr<int> p2 = std::make_shared<int>(42);
+std::weak_ptr<int> p3 = p2;  // doesn't affect reference count</code></pre>
+<p>RAII: Resource Acquisition Is Initialization</p>
+</div>
+
+<div class="component-card">
+<h4>Lambda Expressions</h4>
+<pre><code>auto add = [](int a, int b) { return a + b; };
+
+std::vector<int> v{1, 2, 3, 4};
+std::for_each(v.begin(), v.end(), 
+  [](int &n) { n *= 2; });  // double each element</code></pre>
+</div>
+</div>
+
+<div class="section">
+<h2>📊 STL Containers</h2>
+
+<table>
+<tr><th>Container</th><th>Access</th><th>Insert</th><th>Search</th><th>Use Case</th></tr>
+<tr><td>vector</td><td>O(1)</td><td>O(1) amortized</td><td>O(n)</td><td>Dynamic array</td></tr>
+<tr><td>deque</td><td>O(1)</td><td>O(1) at ends</td><td>O(n)</td><td>Double-ended queue</td></tr>
+<tr><td>list</td><td>O(n)</td><td>O(1)</td><td>O(n)</td><td>Linked list</td></tr>
+<tr><td>map</td><td>O(log n)</td><td>O(log n)</td><td>O(log n)</td><td>Ordered key-value</td></tr>
+<tr><td>unordered_map</td><td>O(1)</td><td>O(1)</td><td>O(1)</td><td>Hash table</td></tr>
+</table>
+</div>
+
+<div class="section">
+<h2>🔧 Templates</h2>
+
+<div class="component-card">
+<h4>Function Template</h4>
+<pre><code>template<typename T>
+T max(T a, T b) {
+    return (a > b) ? a : b;
+}</code></pre>
+</div>
+
+<div class="component-card">
+<h4>Class Template</h4>
+<pre><code>template<typename T>
+class Stack {
+private:
+    std::vector<T> elements;
+public:
+    void push(T const& elem) { elements.push_back(elem); }
+    T pop() { T elem = elements.back(); elements.pop_back(); return elem; }
+};</code></pre>
+</div>
+</div>

@@ -1,0 +1,93 @@
+---
+layout: CompSciNotes
+title: Theory, Logic & Tools
+subtitle: Computational Foundations and Software Engineering
+---
+
+<div class="section">
+<h2>🧮 Computational Complexity</h2>
+
+<div class="theory-box">
+<h4>Big-O Notation</h4>
+<p>f(n) = O(g(n)) if ∃ constants c, n₀ such that f(n) ≤ c·g(n) for all n ≥ n₀</p>
+<p><strong>Common Complexities:</strong> O(1), O(log n), O(n), O(n log n), O(n²), O(2ⁿ), O(n!)</p>
+</div>
+
+<table>
+<tr><th>Algorithm</th><th>Best</th><th>Average</th><th>Worst</th><th>Space</th></tr>
+<tr><td>QuickSort</td><td>O(n log n)</td><td>O(n log n)</td><td>O(n²)</td><td>O(log n)</td></tr>
+<tr><td>MergeSort</td><td>O(n log n)</td><td>O(n log n)</td><td>O(n log n)</td><td>O(n)</td></tr>
+<tr><td>Binary Search</td><td>O(1)</td><td>O(log n)</td><td>O(log n)</td><td>O(1)</td></tr>
+<tr><td>Hash Table</td><td>O(1)</td><td>O(1)</td><td>O(n)</td><td>O(n)</td></tr>
+</table>
+
+<div class="component-grid">
+<div class="component-card">
+<h4>P vs NP</h4>
+<p><strong>P:</strong> Problems solvable in polynomial time<br>
+<strong>NP:</strong> Problems verifiable in polynomial time<br>
+<strong>NP-Complete:</strong> Hardest problems in NP<br>
+<strong>NP-Hard:</strong> At least as hard as NP-Complete</p>
+</div>
+
+<div class="component-card">
+<h4>Data Structures</h4>
+<p><strong>Arrays:</strong> O(1) access, O(n) insert/delete<br>
+<strong>Linked Lists:</strong> O(n) access, O(1) insert/delete at head<br>
+<strong>BST:</strong> O(log n) average, O(n) worst<br>
+<strong>Hash Table:</strong> O(1) average operations</p>
+</div>
+</div>
+</div>
+
+<div class="section">
+<h2>💻 Software Engineering</h2>
+
+<div class="component-grid">
+<div class="component-card">
+<h4>Version Control (Git)</h4>
+<pre><code>git init, clone, add, commit, push, pull
+git branch, checkout, merge
+git rebase, cherry-pick, stash</code></pre>
+<p><strong>Workflow:</strong> Feature branches, pull requests, code review</p>
+</div>
+
+<div class="component-card">
+<h4>Design Patterns</h4>
+<p><strong>Creational:</strong> Singleton, Factory, Builder<br>
+<strong>Structural:</strong> Adapter, Decorator, Facade<br>
+<strong>Behavioral:</strong> Observer, Strategy, Command</p>
+</div>
+
+<div class="component-card">
+<h4>Testing</h4>
+<p><strong>Unit tests:</strong> Individual functions<br>
+<strong>Integration tests:</strong> Component interactions<br>
+<strong>TDD:</strong> Write tests before code<br>
+<strong>CI/CD:</strong> Automated testing and deployment</p>
+</div>
+</div>
+</div>
+
+<div class="section">
+<h2>🔐 Security & Cryptography</h2>
+
+<div class="component-grid">
+<div class="component-card">
+<h4>Encryption</h4>
+<p><strong>Symmetric:</strong> AES (same key encrypt/decrypt)<br>
+<strong>Asymmetric:</strong> RSA (public/private key pairs)<br>
+<strong>Hashing:</strong> SHA-256 (one-way function)</p>
+</div>
+
+<div class="component-card">
+<h4>Common Vulnerabilities</h4>
+<ul>
+<li>SQL Injection</li>
+<li>Cross-Site Scripting (XSS)</li>
+<li>Buffer Overflow</li>
+<li>Man-in-the-Middle</li>
+</ul>
+</div>
+</div>
+</div>

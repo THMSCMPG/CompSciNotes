@@ -1,0 +1,73 @@
+---
+layout: CompSciNotes
+title: JavaScript
+subtitle: Web Development and Asynchronous Programming
+---
+
+<div class="section">
+<h2>🌐 Modern JavaScript (ES6+)</h2>
+
+<div class="component-grid">
+<div class="component-card">
+<h4>Arrow Functions</h4>
+<pre><code>const add = (a, b) => a + b;
+const square = x => x * x;
+
+[1, 2, 3].map(x => x * 2);  // [2, 4, 6]</code></pre>
+</div>
+
+<div class="component-card">
+<h4>Destructuring</h4>
+<pre><code>const {name, age} = person;
+const [first, ...rest] = array;
+
+function greet({name, age}) {
+  console.log(`Hello ${name}, age ${age}`);
+}</code></pre>
+</div>
+</div>
+</div>
+
+<div class="section">
+<h2>⚡ Async/Await</h2>
+
+<div class="component-card">
+<h4>Promises</h4>
+<pre><code>fetch('https://api.example.com/data')
+  .then(response => response.json())
+  .then(data => console.log(data))
+  .catch(error => console.error(error));
+
+// Async/await
+async function getData() {
+  try {
+    const response = await fetch('url');
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.error(error);
+  }
+}</code></pre>
+</div>
+</div>
+
+<div class="section">
+<h2>🎨 DOM Manipulation</h2>
+
+<div class="component-card">
+<h4>Modern DOM APIs</h4>
+<pre><code>// Query selectors
+const element = document.querySelector('.class');
+const elements = document.querySelectorAll('div');
+
+// Event listeners
+element.addEventListener('click', (e) => {
+  e.target.classList.toggle('active');
+});
+
+// Create elements
+const div = document.createElement('div');
+div.textContent = 'Hello';
+document.body.appendChild(div);</code></pre>
+</div>
+</div>

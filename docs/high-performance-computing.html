@@ -1,0 +1,90 @@
+---
+layout: CompSciNotes
+title: High Performance Computing
+subtitle: Parallel Computing and Performance Optimization
+---
+
+<div class="section">
+<h2>⚡ Parallel Architectures</h2>
+
+<div class="component-grid">
+<div class="component-card">
+<h4>Flynn's Taxonomy</h4>
+<p><strong>SISD:</strong> Single Instruction Single Data (serial)<br>
+<strong>SIMD:</strong> Single Instruction Multiple Data (vector)<br>
+<strong>MIMD:</strong> Multiple Instruction Multiple Data (parallel)<br>
+<strong>SPMD:</strong> Single Program Multiple Data (common)</p>
+</div>
+
+<div class="component-card">
+<h4>Memory Models</h4>
+<p><strong>Shared Memory:</strong> OpenMP, threads access common space<br>
+<strong>Distributed Memory:</strong> MPI, message passing between nodes<br>
+<strong>Hybrid:</strong> MPI + OpenMP for clusters</p>
+</div>
+</div>
+</div>
+
+<div class="section">
+<h2>🔄 MPI (Message Passing Interface)</h2>
+
+<div class="component-card">
+<h4>Core Operations</h4>
+<pre><code>MPI_Init, MPI_Finalize
+MPI_Comm_rank, MPI_Comm_size
+MPI_Send, MPI_Recv (point-to-point)
+MPI_Bcast, MPI_Reduce (collective)</code></pre>
+</div>
+
+<div class="component-card">
+<h4>Example: Parallel Sum</h4>
+<pre><code>local_sum = sum(local_data)
+MPI_Reduce(local_sum, global_sum, MPI_SUM, root)</code></pre>
+<p>Each process computes partial sum, root collects total</p>
+</div>
+</div>
+
+<div class="section">
+<h2>💾 GPU Computing (CUDA)</h2>
+
+<div class="theory-box">
+<h4>Programming Model</h4>
+<p><strong>Grid:</strong> Collection of thread blocks<br>
+<strong>Block:</strong> Group of threads sharing memory<br>
+<strong>Warp:</strong> 32 threads executing in lockstep</p>
+<p><strong>Memory Hierarchy:</strong> Global < Shared < Registers</p>
+</div>
+
+<div class="component-card">
+<h4>Simple Kernel</h4>
+<pre><code>__global__ void vectorAdd(float *A, float *B, float *C, int n) {
+    int i = blockIdx.x * blockDim.x + threadIdx.x;
+    if (i < n) C[i] = A[i] + B[i];
+}
+
+// Launch: vectorAdd<<<numBlocks, threadsPerBlock>>>(A, B, C, n);</code></pre>
+</div>
+</div>
+
+<div class="section">
+<h2>📊 Performance Metrics</h2>
+
+<div class="component-grid">
+<div class="component-card">
+<h4>Speedup & Efficiency</h4>
+<div class="formula">
+Speedup S_p = T₁/T_p<br>
+Efficiency E_p = S_p/p
+</div>
+<p><strong>Amdahl's Law:</strong> S_p ≤ 1/((1-P) + P/p)<br>
+where P = fraction parallelizable</p>
+</div>
+
+<div class="component-card">
+<h4>Scalability</h4>
+<p><strong>Strong scaling:</strong> Fixed problem size, increase processors<br>
+<strong>Weak scaling:</strong> Problem size grows with processors<br>
+<strong>Ideal:</strong> Linear speedup S_p = p</p>
+</div>
+</div>
+</div>
