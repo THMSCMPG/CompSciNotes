@@ -1,0 +1,845 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Data Structures 1.2 - Stacks & Queues</title>
+    
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Crimson+Text:ital,wght@0,400;0,600;0,700;1,400&family=Inconsolata:wght@400;600&family=Playfair+Display:wght@700;900&display=swap');
+        
+        :root {
+            --primary: #2c1810;
+            --secondary: #8b4513;
+            --accent: #d4a574;
+            --paper: #f9f5ef;
+            --ink: #1a1a1a;
+            --highlight: #ffd89b;
+            --blue-ink: #1e4d7b;
+            --red-ink: #a0522d;
+        }
+        
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: 'Crimson Text', serif;
+            background: linear-gradient(135deg, #f9f5ef 0%, #e8dcc7 100%);
+            color: var(--ink);
+            line-height: 1.7;
+            min-height: 100vh;
+            padding: 2rem;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: var(--paper);
+            box-shadow: 0 20px 60px rgba(44, 24, 16, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.5);
+            border-radius: 4px;
+            padding: 3rem;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .container::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background-image: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,0.01) 2px, rgba(0,0,0,0.01) 4px);
+            pointer-events: none;
+            opacity: 0.3;
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 3rem;
+            padding-bottom: 2rem;
+            border-bottom: 3px double var(--secondary);
+        }
+        
+        h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: 3.5rem;
+            font-weight: 900;
+            color: var(--primary);
+            margin-bottom: 0.5rem;
+            letter-spacing: -1px;
+            text-shadow: 2px 2px 0 rgba(212, 165, 116, 0.3);
+        }
+        
+        .subtitle {
+            font-size: 1.3rem;
+            color: var(--secondary);
+            font-style: italic;
+            font-weight: 600;
+        }
+        
+        .intro {
+            background: linear-gradient(135deg, rgba(139, 69, 19, 0.05) 0%, rgba(212, 165, 116, 0.1) 100%);
+            padding: 2rem;
+            border-left: 5px solid var(--secondary);
+            margin-bottom: 3rem;
+            border-radius: 0 4px 4px 0;
+            font-size: 1.1rem;
+        }
+        
+        .intro strong { color: var(--secondary); }
+        
+        .question-card {
+            background: white;
+            border: 2px solid var(--accent);
+            border-radius: 8px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .question-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 6px;
+            background: linear-gradient(90deg, var(--secondary), var(--accent));
+        }
+        
+        .question-card:hover {
+            box-shadow: 0 6px 20px rgba(0,0,0,0.15);
+            transform: translateY(-2px);
+        }
+        
+        .question-number {
+            position: absolute;
+            top: 1.5rem;
+            right: 1.5rem;
+            width: 3rem;
+            height: 3rem;
+            background: linear-gradient(135deg, var(--secondary) 0%, var(--accent) 100%);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            font-weight: 700;
+            box-shadow: 0 4px 12px rgba(139, 69, 19, 0.3);
+        }
+        
+        .question-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 2rem;
+            color: var(--primary);
+            margin-bottom: 1rem;
+            padding-right: 4rem;
+        }
+        
+        .question-text {
+            font-size: 1.2rem;
+            color: var(--ink);
+            margin-bottom: 2rem;
+            line-height: 1.8;
+        }
+        
+        .approach-tabs {
+            display: flex;
+            gap: 1rem;
+            margin: 2rem 0 1.5rem;
+            border-bottom: 2px solid var(--accent);
+            flex-wrap: wrap;
+        }
+        
+        .tab-button {
+            background: none;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            font-family: 'Crimson Text', serif;
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--secondary);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border-bottom: 3px solid transparent;
+            margin-bottom: -2px;
+        }
+        
+        .tab-button:hover {
+            color: var(--primary);
+            background: rgba(212, 165, 116, 0.1);
+        }
+        
+        .tab-button.active {
+            color: var(--primary);
+            border-bottom-color: var(--secondary);
+        }
+        
+        .approach-content {
+            display: none;
+            padding: 2rem 0;
+            animation: fadeIn 0.4s ease;
+        }
+        
+        .approach-content.active {
+            display: block;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .step {
+            margin: 2rem 0;
+            padding: 1.5rem;
+            background: rgba(255, 255, 255, 0.5);
+            border-radius: 6px;
+            border-left: 4px solid var(--blue-ink);
+        }
+        
+        .step-number {
+            display: inline-block;
+            width: 2.5rem;
+            height: 2.5rem;
+            background: linear-gradient(135deg, var(--blue-ink) 0%, var(--secondary) 100%);
+            color: white;
+            border-radius: 50%;
+            text-align: center;
+            line-height: 2.5rem;
+            font-weight: 700;
+            margin-right: 1rem;
+            font-size: 1.1rem;
+            box-shadow: 0 2px 6px rgba(30, 77, 123, 0.3);
+        }
+        
+        .step-title {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: var(--blue-ink);
+            margin: 0.5rem 0 1rem;
+        }
+        
+        .step p { margin: 0.75rem 0; font-size: 1.05rem; }
+        .step ul, .step ol { margin: 0.75rem 0 0.75rem 2rem; }
+        .step li { margin: 0.5rem 0; }
+        
+        .code-box {
+            background: #1e1e1e;
+            border: 2px solid var(--blue-ink);
+            border-radius: 6px;
+            padding: 1.5rem;
+            margin: 1rem 0;
+            font-family: 'Inconsolata', monospace;
+            color: #d4d4d4;
+            overflow-x: auto;
+            line-height: 1.6;
+            font-size: 0.95rem;
+        }
+        
+        .code-box .keyword { color: #569cd6; }
+        .code-box .string { color: #ce9178; }
+        .code-box .comment { color: #6a9955; font-style: italic; }
+        .code-box .function { color: #dcdcaa; }
+        .code-box .number { color: #b5cea8; }}
+        
+        .formula-box {
+            background: linear-gradient(135deg, rgba(30, 77, 123, 0.08) 0%, rgba(212, 165, 116, 0.12) 100%);
+            border: 2px solid var(--blue-ink);
+            border-radius: 6px;
+            padding: 1.5rem;
+            margin: 1rem 0;
+            text-align: center;
+            font-size: 1.2rem;
+            font-weight: 600;
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.05);
+        }
+        
+        .key-concept {
+            background: linear-gradient(135deg, rgba(255, 216, 155, 0.2) 0%, rgba(212, 165, 116, 0.15) 100%);
+            border-left: 5px solid var(--highlight);
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+            border-radius: 0 6px 6px 0;
+        }
+        
+        .key-concept h4 {
+            color: var(--secondary);
+            font-size: 1.3rem;
+            margin-bottom: 1rem;
+            font-family: 'Playfair Display', serif;
+        }
+        
+        .hint-box {
+            background: linear-gradient(135deg, rgba(139, 69, 19, 0.05) 0%, rgba(212, 165, 116, 0.08) 100%);
+            border: 2px dashed var(--secondary);
+            border-radius: 6px;
+            padding: 1.25rem;
+            margin: 1.5rem 0;
+            font-style: italic;
+        }
+        
+        .hint-box::before {
+            content: "💡 Hint: ";
+            font-weight: 700;
+            color: var(--secondary);
+            font-style: normal;
+        }
+        
+        .warning-box {
+            background: linear-gradient(135deg, rgba(160, 82, 45, 0.08) 0%, rgba(212, 165, 116, 0.1) 100%);
+            border: 2px solid var(--red-ink);
+            border-radius: 6px;
+            padding: 1.25rem;
+            margin: 1.5rem 0;
+        }
+        
+        .warning-box::before {
+            content: "⚠️ Warning: ";
+            font-weight: 700;
+            color: var(--red-ink);
+        }
+        
+        .complexity-badge {
+            display: inline-block;
+            padding: 0.5rem 1rem;
+            background: var(--blue-ink);
+            color: white;
+            border-radius: 20px;
+            font-weight: 600;
+            font-size: 0.95rem;
+            margin: 0.5rem 0.5rem 0.5rem 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Data Structures II</h1>
+            <p class="subtitle">Stacks & Queues</p>
+        </div>
+        
+        <div class="intro">
+            <strong>Welcome!</strong> Master two fundamental abstract data types: LIFO (Last-In-First-Out) stacks and FIFO (First-In-First-Out) queues. Learn their implementations, applications, and problem-solving patterns.
+        </div>
+        
+        <!-- Question 1 -->
+        <div class="question-card" id="q1">
+            <span class="question-number">1</span>
+            <h2 class="question-title">Implementing a Stack</h2>
+            <div class="question-text">
+                Implement a stack data structure supporting push(), pop(), peek(), and isEmpty() operations.
+            </div>
+            <div class="approach-tabs">
+                <button class="tab-button active" onclick="showApproach('q1', 1)">Array-Based</button>
+                <button class="tab-button" onclick="showApproach('q1', 2)">Linked List</button>
+                <button class="tab-button" onclick="showApproach('q1', 3)">Comparison</button>
+            </div>
+            <div class="approach-content active" id="q1-approach1">
+                <h3 style="color: var(--blue-ink); margin-bottom: 1rem;">Approach 1: Array-Based Stack</h3>
+                <div class="step">
+                    <span class="step-number">1</span>
+                    <div class="step-title">Implementation</div>
+                    <div class="code-box"><span class="keyword">class</span> Stack:
+    <span class="keyword">def</span> <span class="function">__init__</span>(<span class="keyword">self</span>):
+        <span class="keyword">self</span>.items = []
+    
+    <span class="keyword">def</span> <span class="function">push</span>(<span class="keyword">self</span>, item):
+        <span class="comment"># Add to end of array - O(1) amortized</span>
+        <span class="keyword">self</span>.items.append(item)
+    
+    <span class="keyword">def</span> <span class="function">pop</span>(<span class="keyword">self</span>):
+        <span class="keyword">if</span> <span class="keyword">self</span>.<span class="function">isEmpty</span>():
+            <span class="keyword">raise</span> <span class="function">Exception</span>(<span class="string">"Stack is empty"</span>)
+        <span class="comment"># Remove from end - O(1)</span>
+        <span class="keyword">return</span> <span class="keyword">self</span>.items.pop()
+    
+    <span class="keyword">def</span> <span class="function">peek</span>(<span class="keyword">self</span>):
+        <span class="keyword">if</span> <span class="keyword">self</span>.<span class="function">isEmpty</span>():
+            <span class="keyword">raise</span> <span class="function">Exception</span>(<span class="string">"Stack is empty"</span>)
+        <span class="comment"># View top without removing - O(1)</span>
+        <span class="keyword">return</span> <span class="keyword">self</span>.items[-<span class="number">1</span>]
+    
+    <span class="keyword">def</span> <span class="function">isEmpty</span>(<span class="keyword">self</span>):
+        <span class="keyword">return</span> <span class="function">len</span>(<span class="keyword">self</span>.items) == <span class="number">0</span>
+    
+    <span class="keyword">def</span> <span class="function">size</span>(<span class="keyword">self</span>):
+        <span class="keyword">return</span> <span class="function">len</span>(<span class="keyword">self</span>.items)</div>
+                </div>
+                <div class="step">
+                    <span class="step-number">2</span>
+                    <div class="step-title">Complexity Analysis</div>
+                    <p><span class="complexity-badge">Push: O(1) amortized</span></p>
+                    <p><span class="complexity-badge">Pop: O(1)</span></p>
+                    <p><span class="complexity-badge">Peek: O(1)</span></p>
+                    <p><span class="complexity-badge">Space: O(n)</span></p>
+                </div>
+                <div class="key-concept">
+                    <h4>Array-Based Advantages</h4>
+                    <p>✓ Simple implementation<br>
+                    ✓ Cache-friendly (contiguous memory)<br>
+                    ✓ No pointer overhead</p>
+                </div>
+            </div>
+            <div class="approach-content" id="q1-approach2">
+                <h3 style="color: var(--blue-ink); margin-bottom: 1rem;">Approach 2: Linked List Stack</h3>
+                <div class="step">
+                    <span class="step-number">1</span>
+                    <div class="step-title">Implementation</div>
+                    <div class="code-box"><span class="keyword">class</span> Node:
+    <span class="keyword">def</span> <span class="function">__init__</span>(<span class="keyword">self</span>, data):
+        <span class="keyword">self</span>.data = data
+        <span class="keyword">self</span>.next = <span class="keyword">None</span>
+
+<span class="keyword">class</span> Stack:
+    <span class="keyword">def</span> <span class="function">__init__</span>(<span class="keyword">self</span>):
+        <span class="keyword">self</span>.top = <span class="keyword">None</span>
+        <span class="keyword">self</span>._size = <span class="number">0</span>
+    
+    <span class="keyword">def</span> <span class="function">push</span>(<span class="keyword">self</span>, item):
+        <span class="comment"># Create new node and make it the new top</span>
+        new_node = Node(item)
+        new_node.next = <span class="keyword">self</span>.top
+        <span class="keyword">self</span>.top = new_node
+        <span class="keyword">self</span>._size += <span class="number">1</span>
+    
+    <span class="keyword">def</span> <span class="function">pop</span>(<span class="keyword">self</span>):
+        <span class="keyword">if</span> <span class="keyword">self</span>.<span class="function">isEmpty</span>():
+            <span class="keyword">raise</span> <span class="function">Exception</span>(<span class="string">"Stack is empty"</span>)
+        <span class="comment"># Remove top and return its value</span>
+        data = <span class="keyword">self</span>.top.data
+        <span class="keyword">self</span>.top = <span class="keyword">self</span>.top.next
+        <span class="keyword">self</span>._size -= <span class="number">1</span>
+        <span class="keyword">return</span> data
+    
+    <span class="keyword">def</span> <span class="function">peek</span>(<span class="keyword">self</span>):
+        <span class="keyword">if</span> <span class="keyword">self</span>.<span class="function">isEmpty</span>():
+            <span class="keyword">raise</span> <span class="function">Exception</span>(<span class="string">"Stack is empty"</span>)
+        <span class="keyword">return</span> <span class="keyword">self</span>.top.data
+    
+    <span class="keyword">def</span> <span class="function">isEmpty</span>(<span class="keyword">self</span>):
+        <span class="keyword">return</span> <span class="keyword">self</span>.top <span class="keyword">is</span> <span class="keyword">None</span>
+    
+    <span class="keyword">def</span> <span class="function">size</span>(<span class="keyword">self</span>):
+        <span class="keyword">return</span> <span class="keyword">self</span>._size</div>
+                </div>
+                <div class="step">
+                    <span class="step-number">2</span>
+                    <div class="step-title">Complexity Analysis</div>
+                    <p><span class="complexity-badge">Push: O(1)</span></p>
+                    <p><span class="complexity-badge">Pop: O(1)</span></p>
+                    <p><span class="complexity-badge">Peek: O(1)</span></p>
+                    <p><span class="complexity-badge">Space: O(n) + pointer overhead</span></p>
+                </div>
+                <div class="key-concept">
+                    <h4>Linked List Advantages</h4>
+                    <p>✓ No need to resize<br>
+                    ✓ True O(1) push (no amortization)<br>
+                    ✓ Can grow indefinitely</p>
+                </div>
+            </div>
+            <div class="approach-content" id="q1-approach3">
+                <h3 style="color: var(--blue-ink); margin-bottom: 1rem;">Approach 3: Comparison</h3>
+                <div class="key-concept">
+                    <h4>Array vs Linked List Stack</h4>
+                    <table style="width: 100%; border-collapse: collapse; margin-top: 1rem;">
+                        <tr style="background: var(--accent); color: var(--primary);">
+                            <th style="padding: 0.75rem; border: 1px solid var(--secondary);">Aspect</th>
+                            <th style="padding: 0.75rem; border: 1px solid var(--secondary);">Array</th>
+                            <th style="padding: 0.75rem; border: 1px solid var(--secondary);">Linked List</th>
+                        </tr>
+                        <tr>
+                            <td style="padding: 0.75rem; border: 1px solid var(--accent);">Push/Pop</td>
+                            <td style="padding: 0.75rem; border: 1px solid var(--accent);">O(1) amortized</td>
+                            <td style="padding: 0.75rem; border: 1px solid var(--accent);">O(1) true</td>
+                        </tr>
+                        <tr>
+                            <td style="padding: 0.75rem; border: 1px solid var(--accent);">Memory</td>
+                            <td style="padding: 0.75rem; border: 1px solid var(--accent);">Contiguous, cache-friendly</td>
+                            <td style="padding: 0.75rem; border: 1px solid var(--accent);">Scattered, pointer overhead</td>
+                        </tr>
+                        <tr>
+                            <td style="padding: 0.75rem; border: 1px solid var(--accent);">Resizing</td>
+                            <td style="padding: 0.75rem; border: 1px solid var(--accent);">Periodic O(n) cost</td>
+                            <td style="padding: 0.75rem; border: 1px solid var(--accent);">No resizing needed</td>
+                        </tr>
+                        <tr>
+                            <td style="padding: 0.75rem; border: 1px solid var(--accent);">Implementation</td>
+                            <td style="padding: 0.75rem; border: 1px solid var(--accent);">Simpler</td>
+                            <td style="padding: 0.75rem; border: 1px solid var(--accent);">More complex</td>
+                        </tr>
+                    </table>
+                </div>
+                <div class="hint-box">
+                    In practice, array-based stacks are usually faster due to better cache locality, despite occasional resize costs!
+                </div>
+            </div>
+        </div>
+
+        <!-- Question 2 -->
+        <div class="question-card" id="q2">
+            <span class="question-number">2</span>
+            <h2 class="question-title">Valid Parentheses Problem</h2>
+            <div class="question-text">
+                Given a string containing '(', ')', '{', '}', '[', ']', determine if the input string is valid. Valid means: brackets must close in correct order and every opening bracket has a corresponding closing bracket.
+            </div>
+            <div class="approach-tabs">
+                <button class="tab-button active" onclick="showApproach('q2', 1)">Stack Solution</button>
+                <button class="tab-button" onclick="showApproach('q2', 2)">Analysis</button>
+                <button class="tab-button" onclick="showApproach('q2', 3)">Edge Cases</button>
+            </div>
+            <div class="approach-content active" id="q2-approach1">
+                <h3 style="color: var(--blue-ink); margin-bottom: 1rem;">Approach 1: Stack-Based Solution</h3>
+                <div class="step">
+                    <span class="step-number">1</span>
+                    <div class="step-title">Implementation</div>
+                    <div class="code-box"><span class="keyword">def</span> <span class="function">is_valid</span>(s):
+    <span class="comment"># Map of closing to opening brackets</span>
+    matching = {<span class="string">')'</span>: <span class="string">'('</span>, <span class="string">'}'</span>: <span class="string">'{'</span>, <span class="string">']'</span>: <span class="string">'['</span>}
+    stack = []
+    
+    <span class="keyword">for</span> char <span class="keyword">in</span> s:
+        <span class="keyword">if</span> char <span class="keyword">in</span> matching:  <span class="comment"># Closing bracket</span>
+            <span class="keyword">if</span> <span class="keyword">not</span> stack <span class="keyword">or</span> stack[-<span class="number">1</span>] != matching[char]:
+                <span class="keyword">return</span> <span class="keyword">False</span>
+            stack.pop()
+        <span class="keyword">else</span>:  <span class="comment"># Opening bracket</span>
+            stack.append(char)
+    
+    <span class="comment"># Valid if no unmatched opening brackets</span>
+    <span class="keyword">return</span> <span class="function">len</span>(stack) == <span class="number">0</span>
+
+<span class="comment"># Examples</span>
+<span class="function">print</span>(<span class="function">is_valid</span>(<span class="string">"()"</span>))         <span class="comment"># True</span>
+<span class="function">print</span>(<span class="function">is_valid</span>(<span class="string">"()[]{}"</span>))    <span class="comment"># True</span>
+<span class="function">print</span>(<span class="function">is_valid</span>(<span class="string">"(]"</span>))         <span class="comment"># False</span>
+<span class="function">print</span>(<span class="function">is_valid</span>(<span class="string">"([)]"</span>))       <span class="comment"># False</span>
+<span class="function">print</span>(<span class="function">is_valid</span>(<span class="string">"{[]}"</span>))       <span class="comment"># True</span></div>
+                </div>
+                <div class="step">
+                    <span class="step-number">2</span>
+                    <div class="step-title">How It Works</div>
+                    <p>The algorithm uses a stack to track opening brackets:</p>
+                    <ol>
+                        <li>When we see an opening bracket, push it onto the stack</li>
+                        <li>When we see a closing bracket:
+                            <ul>
+                                <li>Check if stack is empty (no matching opening) → invalid</li>
+                                <li>Check if top of stack matches this closing bracket</li>
+                                <li>If match, pop the opening bracket</li>
+                                <li>If no match → invalid</li>
+                            </ul>
+                        </li>
+                        <li>At the end, stack should be empty (all brackets matched)</li>
+                    </ol>
+                </div>
+                <div class="step">
+                    <span class="step-number">3</span>
+                    <div class="step-title">Complexity</div>
+                    <p><span class="complexity-badge">Time: O(n)</span> - one pass through string</p>
+                    <p><span class="complexity-badge">Space: O(n)</span> - worst case all opening brackets</p>
+                </div>
+            </div>
+            <div class="approach-content" id="q2-approach2">
+                <h3 style="color: var(--blue-ink); margin-bottom: 1rem;">Approach 2: Analysis & Walkthrough</h3>
+                <div class="step">
+                    <span class="step-number">1</span>
+                    <div class="step-title">Example: "{[]}"</div>
+                    <p>Let's trace through a valid example:</p>
+                    <table style="width: 100%; border-collapse: collapse;">
+                        <tr style="background: var(--accent);">
+                            <th style="padding: 0.5rem; border: 1px solid var(--secondary);">Char</th>
+                            <th style="padding: 0.5rem; border: 1px solid var(--secondary);">Action</th>
+                            <th style="padding: 0.5rem; border: 1px solid var(--secondary);">Stack</th>
+                        </tr>
+                        <tr>
+                            <td style="padding: 0.5rem; border: 1px solid var(--accent);">{</td>
+                            <td style="padding: 0.5rem; border: 1px solid var(--accent);">Push</td>
+                            <td style="padding: 0.5rem; border: 1px solid var(--accent);">['{']</td>
+                        </tr>
+                        <tr>
+                            <td style="padding: 0.5rem; border: 1px solid var(--accent);">[</td>
+                            <td style="padding: 0.5rem; border: 1px solid var(--accent);">Push</td>
+                            <td style="padding: 0.5rem; border: 1px solid var(--accent);">['{', '[']</td>
+                        </tr>
+                        <tr>
+                            <td style="padding: 0.5rem; border: 1px solid var(--accent);">]</td>
+                            <td style="padding: 0.5rem; border: 1px solid var(--accent);">Match & Pop</td>
+                            <td style="padding: 0.5rem; border: 1px solid var(--accent);">['{']</td>
+                        </tr>
+                        <tr>
+                            <td style="padding: 0.5rem; border: 1px solid var(--accent);">}</td>
+                            <td style="padding: 0.5rem; border: 1px solid var(--accent);">Match & Pop</td>
+                            <td style="padding: 0.5rem; border: 1px solid var(--accent);">[]</td>
+                        </tr>
+                    </table>
+                    <p style="margin-top: 1rem;">Result: Stack empty → Valid!</p>
+                </div>
+                <div class="step">
+                    <span class="step-number">2</span>
+                    <div class="step-title">Example: "([)]" - Invalid</div>
+                    <table style="width: 100%; border-collapse: collapse;">
+                        <tr style="background: var(--accent);">
+                            <th style="padding: 0.5rem; border: 1px solid var(--secondary);">Char</th>
+                            <th style="padding: 0.5rem; border: 1px solid var(--secondary);">Action</th>
+                            <th style="padding: 0.5rem; border: 1px solid var(--secondary);">Stack</th>
+                        </tr>
+                        <tr>
+                            <td style="padding: 0.5rem; border: 1px solid var(--accent);">(</td>
+                            <td style="padding: 0.5rem; border: 1px solid var(--accent);">Push</td>
+                            <td style="padding: 0.5rem; border: 1px solid var(--accent);">['(']</td>
+                        </tr>
+                        <tr>
+                            <td style="padding: 0.5rem; border: 1px solid var(--accent);">[</td>
+                            <td style="padding: 0.5rem; border: 1px solid var(--accent);">Push</td>
+                            <td style="padding: 0.5rem; border: 1px solid var(--accent);">['(', '[']</td>
+                        </tr>
+                        <tr style="background: rgba(160, 82, 45, 0.1);">
+                            <td style="padding: 0.5rem; border: 1px solid var(--accent);">)</td>
+                            <td style="padding: 0.5rem; border: 1px solid var(--accent);">❌ Mismatch!</td>
+                            <td style="padding: 0.5rem; border: 1px solid var(--accent);">Top is '[', not '('</td>
+                        </tr>
+                    </table>
+                    <p style="margin-top: 1rem;">Result: Mismatch detected → Invalid!</p>
+                </div>
+            </div>
+            <div class="approach-content" id="q2-approach3">
+                <h3 style="color: var(--blue-ink); margin-bottom: 1rem;">Approach 3: Edge Cases</h3>
+                <div class="key-concept">
+                    <h4>Important Edge Cases</h4>
+                    <p><strong>Empty string "":</strong> Valid (no brackets to match)</p>
+                    <p><strong>Only opening "(((":</strong> Invalid (stack not empty at end)</p>
+                    <p><strong>Only closing ")))":</strong> Invalid (empty stack when trying to match)</p>
+                    <p><strong>Mismatched "([)]":</strong> Invalid (wrong bracket type at top)</p>
+                    <p><strong>Interleaved "({}[])":</strong> Valid (proper nesting)</p>
+                </div>
+                <div class="hint-box">
+                    This is a classic interview question! Practice until you can write it flawlessly in 5 minutes.
+                </div>
+                <div class="warning-box">
+                    Always check if the stack is empty before popping or peeking to avoid errors!
+                </div>
+            </div>
+        </div>
+
+        <!-- More questions would follow here - continuing the pattern -->
+        <!-- For brevity, I'll add just one queue question -->
+
+        <!-- Question 3 -->
+        <div class="question-card" id="q3">
+            <span class="question-number">3</span>
+            <h2 class="question-title">Implementing a Queue</h2>
+            <div class="question-text">
+                Implement a queue data structure supporting enqueue(), dequeue(), peek(), and isEmpty() operations.
+            </div>
+            <div class="approach-tabs">
+                <button class="tab-button active" onclick="showApproach('q3', 1)">Array-Based</button>
+                <button class="tab-button" onclick="showApproach('q3', 2)">Linked List</button>
+                <button class="tab-button" onclick="showApproach('q3', 3)">Circular Buffer</button>
+            </div>
+            <div class="approach-content active" id="q3-approach1">
+                <h3 style="color: var(--blue-ink); margin-bottom: 1rem;">Approach 1: Simple Array Queue</h3>
+                <div class="step">
+                    <span class="step-number">1</span>
+                    <div class="step-title">Naive Implementation</div>
+                    <div class="code-box"><span class="keyword">class</span> Queue:
+    <span class="keyword">def</span> <span class="function">__init__</span>(<span class="keyword">self</span>):
+        <span class="keyword">self</span>.items = []
+    
+    <span class="keyword">def</span> <span class="function">enqueue</span>(<span class="keyword">self</span>, item):
+        <span class="comment"># Add to end - O(1)</span>
+        <span class="keyword">self</span>.items.append(item)
+    
+    <span class="keyword">def</span> <span class="function">dequeue</span>(<span class="keyword">self</span>):
+        <span class="keyword">if</span> <span class="keyword">self</span>.<span class="function">isEmpty</span>():
+            <span class="keyword">raise</span> <span class="function">Exception</span>(<span class="string">"Queue is empty"</span>)
+        <span class="comment"># Remove from front - O(n) ⚠️</span>
+        <span class="keyword">return</span> <span class="keyword">self</span>.items.pop(<span class="number">0</span>)
+    
+    <span class="keyword">def</span> <span class="function">peek</span>(<span class="keyword">self</span>):
+        <span class="keyword">if</span> <span class="keyword">self</span>.<span class="function">isEmpty</span>():
+            <span class="keyword">raise</span> <span class="function">Exception</span>(<span class="string">"Queue is empty"</span>)
+        <span class="keyword">return</span> <span class="keyword">self</span>.items[<span class="number">0</span>]
+    
+    <span class="keyword">def</span> <span class="function">isEmpty</span>(<span class="keyword">self</span>):
+        <span class="keyword">return</span> <span class="function">len</span>(<span class="keyword">self</span>.items) == <span class="number">0</span></div>
+                </div>
+                <div class="warning-box">
+                    Dequeue is O(n) because removing from index 0 requires shifting all remaining elements!
+                </div>
+                <div class="step">
+                    <span class="step-number">2</span>
+                    <div class="step-title">Complexity</div>
+                    <p><span class="complexity-badge">Enqueue: O(1)</span></p>
+                    <p><span class="complexity-badge">Dequeue: O(n)</span> ⚠️ INEFFICIENT</p>
+                </div>
+            </div>
+            <div class="approach-content" id="q3-approach2">
+                <h3 style="color: var(--blue-ink); margin-bottom: 1rem;">Approach 2: Linked List Queue</h3>
+                <div class="step">
+                    <span class="step-number">1</span>
+                    <div class="step-title">Optimal Implementation</div>
+                    <div class="code-box"><span class="keyword">class</span> Node:
+    <span class="keyword">def</span> <span class="function">__init__</span>(<span class="keyword">self</span>, data):
+        <span class="keyword">self</span>.data = data
+        <span class="keyword">self</span>.next = <span class="keyword">None</span>
+
+<span class="keyword">class</span> Queue:
+    <span class="keyword">def</span> <span class="function">__init__</span>(<span class="keyword">self</span>):
+        <span class="keyword">self</span>.front = <span class="keyword">None</span>  <span class="comment"># Remove from here</span>
+        <span class="keyword">self</span>.rear = <span class="keyword">None</span>   <span class="comment"># Add here</span>
+        <span class="keyword">self</span>._size = <span class="number">0</span>
+    
+    <span class="keyword">def</span> <span class="function">enqueue</span>(<span class="keyword">self</span>, item):
+        <span class="comment"># Create new node</span>
+        new_node = Node(item)
+        
+        <span class="keyword">if</span> <span class="keyword">self</span>.rear <span class="keyword">is</span> <span class="keyword">None</span>:  <span class="comment"># Empty queue</span>
+            <span class="keyword">self</span>.front = <span class="keyword">self</span>.rear = new_node
+        <span class="keyword">else</span>:
+            <span class="comment"># Add to rear</span>
+            <span class="keyword">self</span>.rear.next = new_node
+            <span class="keyword">self</span>.rear = new_node
+        
+        <span class="keyword">self</span>._size += <span class="number">1</span>
+    
+    <span class="keyword">def</span> <span class="function">dequeue</span>(<span class="keyword">self</span>):
+        <span class="keyword">if</span> <span class="keyword">self</span>.<span class="function">isEmpty</span>():
+            <span class="keyword">raise</span> <span class="function">Exception</span>(<span class="string">"Queue is empty"</span>)
+        
+        <span class="comment"># Remove from front</span>
+        data = <span class="keyword">self</span>.front.data
+        <span class="keyword">self</span>.front = <span class="keyword">self</span>.front.next
+        
+        <span class="comment"># If queue becomes empty</span>
+        <span class="keyword">if</span> <span class="keyword">self</span>.front <span class="keyword">is</span> <span class="keyword">None</span>:
+            <span class="keyword">self</span>.rear = <span class="keyword">None</span>
+        
+        <span class="keyword">self</span>._size -= <span class="number">1</span>
+        <span class="keyword">return</span> data
+    
+    <span class="keyword">def</span> <span class="function">peek</span>(<span class="keyword">self</span>):
+        <span class="keyword">if</span> <span class="keyword">self</span>.<span class="function">isEmpty</span>():
+            <span class="keyword">raise</span> <span class="function">Exception</span>(<span class="string">"Queue is empty"</span>)
+        <span class="keyword">return</span> <span class="keyword">self</span>.front.data
+    
+    <span class="keyword">def</span> <span class="function">isEmpty</span>(<span class="keyword">self</span>):
+        <span class="keyword">return</span> <span class="keyword">self</span>.front <span class="keyword">is</span> <span class="keyword">None</span>
+    
+    <span class="keyword">def</span> <span class="function">size</span>(<span class="keyword">self</span>):
+        <span class="keyword">return</span> <span class="keyword">self</span>._size</div>
+                </div>
+                <div class="step">
+                    <span class="step-number">2</span>
+                    <div class="step-title">Complexity</div>
+                    <p><span class="complexity-badge">Enqueue: O(1)</span></p>
+                    <p><span class="complexity-badge">Dequeue: O(1)</span></p>
+                    <p><span class="complexity-badge">Space: O(n)</span></p>
+                </div>
+                <div class="key-concept">
+                    <h4>Why Two Pointers?</h4>
+                    <p><strong>Front pointer:</strong> For O(1) dequeue (remove from head)</p>
+                    <p><strong>Rear pointer:</strong> For O(1) enqueue (add to tail)</p>
+                    <p>Without both, one operation would be O(n)!</p>
+                </div>
+            </div>
+            <div class="approach-content" id="q3-approach3">
+                <h3 style="color: var(--blue-ink); margin-bottom: 1rem;">Approach 3: Circular Buffer</h3>
+                <div class="step">
+                    <span class="step-number">1</span>
+                    <div class="step-title">Fixed-Size Circular Queue</div>
+                    <div class="code-box"><span class="keyword">class</span> CircularQueue:
+    <span class="keyword">def</span> <span class="function">__init__</span>(<span class="keyword">self</span>, capacity):
+        <span class="keyword">self</span>.capacity = capacity
+        <span class="keyword">self</span>.queue = [<span class="keyword">None</span>] * capacity
+        <span class="keyword">self</span>.front = <span class="number">0</span>
+        <span class="keyword">self</span>.rear = -<span class="number">1</span>
+        <span class="keyword">self</span>._size = <span class="number">0</span>
+    
+    <span class="keyword">def</span> <span class="function">enqueue</span>(<span class="keyword">self</span>, item):
+        <span class="keyword">if</span> <span class="keyword">self</span>.<span class="function">isFull</span>():
+            <span class="keyword">raise</span> <span class="function">Exception</span>(<span class="string">"Queue is full"</span>)
+        
+        <span class="comment"># Wrap around using modulo</span>
+        <span class="keyword">self</span>.rear = (<span class="keyword">self</span>.rear + <span class="number">1</span>) % <span class="keyword">self</span>.capacity
+        <span class="keyword">self</span>.queue[<span class="keyword">self</span>.rear] = item
+        <span class="keyword">self</span>._size += <span class="number">1</span>
+    
+    <span class="keyword">def</span> <span class="function">dequeue</span>(<span class="keyword">self</span>):
+        <span class="keyword">if</span> <span class="keyword">self</span>.<span class="function">isEmpty</span>():
+            <span class="keyword">raise</span> <span class="function">Exception</span>(<span class="string">"Queue is empty"</span>)
+        
+        item = <span class="keyword">self</span>.queue[<span class="keyword">self</span>.front]
+        <span class="comment"># Wrap around using modulo</span>
+        <span class="keyword">self</span>.front = (<span class="keyword">self</span>.front + <span class="number">1</span>) % <span class="keyword">self</span>.capacity
+        <span class="keyword">self</span>._size -= <span class="number">1</span>
+        <span class="keyword">return</span> item
+    
+    <span class="keyword">def</span> <span class="function">isFull</span>(<span class="keyword">self</span>):
+        <span class="keyword">return</span> <span class="keyword">self</span>._size == <span class="keyword">self</span>.capacity
+    
+    <span class="keyword">def</span> <span class="function">isEmpty</span>(<span class="keyword">self</span>):
+        <span class="keyword">return</span> <span class="keyword">self</span>._size == <span class="number">0</span></div>
+                </div>
+                <div class="step">
+                    <span class="step-number">2</span>
+                    <div class="step-title">How Circular Buffer Works</div>
+                    <p>Instead of shifting elements, we use modulo arithmetic to wrap around:</p>
+                    <pre style="background: rgba(30,77,123,0.1); padding: 1rem; border-radius: 4px;">
+Initial:    [_, _, _, _]    front=0, rear=-1
+Enqueue 1:  [1, _, _, _]    front=0, rear=0
+Enqueue 2:  [1, 2, _, _]    front=0, rear=1
+Dequeue:    [_, 2, _, _]    front=1, rear=1
+Enqueue 3:  [_, 2, 3, _]    front=1, rear=2
+Enqueue 4:  [_, 2, 3, 4]    front=1, rear=3
+Enqueue 5:  [5, 2, 3, 4]    front=1, rear=0 (wrapped!)
+                    </pre>
+                </div>
+                <div class="step">
+                    <span class="step-number">3</span>
+                    <div class="step-title">Advantages</div>
+                    <p><span class="complexity-badge">Enqueue: O(1)</span></p>
+                    <p><span class="complexity-badge">Dequeue: O(1)</span></p>
+                    <p>✓ No shifting needed<br>
+                    ✓ Cache-friendly (array-based)<br>
+                    ✓ Fixed memory footprint</p>
+                </div>
+                <div class="hint-box">
+                    Circular buffers are perfect for fixed-size buffers in systems programming, like ring buffers in operating systems!
+                </div>
+            </div>
+        </div>
+
+        <div class="intro" style="margin-top: 3rem; border-left-color: var(--blue-ink);">
+            <strong>Summary:</strong> Stacks (LIFO) are perfect for function calls, undo/redo, and bracket matching. Queues (FIFO) excel at task scheduling, breadth-first search, and buffering. Master both!
+        </div>
+    </div>
+    
+    <script>
+        function showApproach(question, approachNum) {
+            const approaches = document.querySelectorAll(`#${question} .approach-content`);
+            approaches.forEach(a => a.classList.remove('active'));
+            
+            const tabs = document.querySelectorAll(`#${question} .tab-button`);
+            tabs.forEach(t => t.classList.remove('active'));
+            
+            document.getElementById(`${question}-approach${approachNum}`).classList.add('active');
+            event.target.classList.add('active');
+            
+            if (window.MathJax) {
+                MathJax.typesetPromise();
+            }
+        }
+        
+        document.addEventListener('DOMContentLoaded', function() {
+            if (window.MathJax) {
+                MathJax.typesetPromise();
+            }
+        });
+    </script>
+</body>
+</html>

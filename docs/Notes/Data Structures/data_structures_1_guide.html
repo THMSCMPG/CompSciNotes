@@ -1,0 +1,854 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Data Structures 1.1 - Arrays & Linked Lists</title>
+    
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Crimson+Text:ital,wght@0,400;0,600;0,700;1,400&family=Inconsolata:wght@400;600&family=Playfair+Display:wght@700;900&display=swap');
+        
+        :root {
+            --primary: #2c1810;
+            --secondary: #8b4513;
+            --accent: #d4a574;
+            --paper: #f9f5ef;
+            --ink: #1a1a1a;
+            --highlight: #ffd89b;
+            --blue-ink: #1e4d7b;
+            --red-ink: #a0522d;
+        }
+        
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: 'Crimson Text', serif;
+            background: linear-gradient(135deg, #f9f5ef 0%, #e8dcc7 100%);
+            color: var(--ink);
+            line-height: 1.7;
+            min-height: 100vh;
+            padding: 2rem;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: var(--paper);
+            box-shadow: 0 20px 60px rgba(44, 24, 16, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.5);
+            border-radius: 4px;
+            padding: 3rem;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .container::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background-image: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,0.01) 2px, rgba(0,0,0,0.01) 4px);
+            pointer-events: none;
+            opacity: 0.3;
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 3rem;
+            padding-bottom: 2rem;
+            border-bottom: 3px double var(--secondary);
+        }
+        
+        h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: 3.5rem;
+            font-weight: 900;
+            color: var(--primary);
+            margin-bottom: 0.5rem;
+            letter-spacing: -1px;
+            text-shadow: 2px 2px 0 rgba(212, 165, 116, 0.3);
+        }
+        
+        .subtitle {
+            font-size: 1.3rem;
+            color: var(--secondary);
+            font-style: italic;
+            font-weight: 600;
+        }
+        
+        .intro {
+            background: linear-gradient(135deg, rgba(139, 69, 19, 0.05) 0%, rgba(212, 165, 116, 0.1) 100%);
+            padding: 2rem;
+            border-left: 5px solid var(--secondary);
+            margin-bottom: 3rem;
+            border-radius: 0 4px 4px 0;
+            font-size: 1.1rem;
+        }
+        
+        .intro strong { color: var(--secondary); }
+        
+        .question-card {
+            background: white;
+            border: 2px solid var(--accent);
+            border-radius: 8px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .question-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 6px;
+            background: linear-gradient(90deg, var(--secondary), var(--accent));
+        }
+        
+        .question-card:hover {
+            box-shadow: 0 6px 20px rgba(0,0,0,0.15);
+            transform: translateY(-2px);
+        }
+        
+        .question-number {
+            position: absolute;
+            top: 1.5rem;
+            right: 1.5rem;
+            width: 3rem;
+            height: 3rem;
+            background: linear-gradient(135deg, var(--secondary) 0%, var(--accent) 100%);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            font-weight: 700;
+            box-shadow: 0 4px 12px rgba(139, 69, 19, 0.3);
+        }
+        
+        .question-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 2rem;
+            color: var(--primary);
+            margin-bottom: 1rem;
+            padding-right: 4rem;
+        }
+        
+        .question-text {
+            font-size: 1.2rem;
+            color: var(--ink);
+            margin-bottom: 2rem;
+            line-height: 1.8;
+        }
+        
+        .approach-tabs {
+            display: flex;
+            gap: 1rem;
+            margin: 2rem 0 1.5rem;
+            border-bottom: 2px solid var(--accent);
+            flex-wrap: wrap;
+        }
+        
+        .tab-button {
+            background: none;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            font-family: 'Crimson Text', serif;
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--secondary);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border-bottom: 3px solid transparent;
+            margin-bottom: -2px;
+        }
+        
+        .tab-button:hover {
+            color: var(--primary);
+            background: rgba(212, 165, 116, 0.1);
+        }
+        
+        .tab-button.active {
+            color: var(--primary);
+            border-bottom-color: var(--secondary);
+        }
+        
+        .approach-content {
+            display: none;
+            padding: 2rem 0;
+            animation: fadeIn 0.4s ease;
+        }
+        
+        .approach-content.active {
+            display: block;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .step {
+            margin: 2rem 0;
+            padding: 1.5rem;
+            background: rgba(255, 255, 255, 0.5);
+            border-radius: 6px;
+            border-left: 4px solid var(--blue-ink);
+        }
+        
+        .step-number {
+            display: inline-block;
+            width: 2.5rem;
+            height: 2.5rem;
+            background: linear-gradient(135deg, var(--blue-ink) 0%, var(--secondary) 100%);
+            color: white;
+            border-radius: 50%;
+            text-align: center;
+            line-height: 2.5rem;
+            font-weight: 700;
+            margin-right: 1rem;
+            font-size: 1.1rem;
+            box-shadow: 0 2px 6px rgba(30, 77, 123, 0.3);
+        }
+        
+        .step-title {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: var(--blue-ink);
+            margin: 0.5rem 0 1rem;
+        }
+        
+        .step p { margin: 0.75rem 0; font-size: 1.05rem; }
+        .step ul, .step ol { margin: 0.75rem 0 0.75rem 2rem; }
+        .step li { margin: 0.5rem 0; }
+        
+        .code-box {
+            background: #1e1e1e;
+            border: 2px solid var(--blue-ink);
+            border-radius: 6px;
+            padding: 1.5rem;
+            margin: 1rem 0;
+            font-family: 'Inconsolata', monospace;
+            color: #d4d4d4;
+            overflow-x: auto;
+            line-height: 1.6;
+            font-size: 0.95rem;
+        }
+        
+        .code-box .keyword { color: #569cd6; }
+        .code-box .string { color: #ce9178; }
+        .code-box .comment { color: #6a9955; font-style: italic; }
+        .code-box .function { color: #dcdcaa; }
+        .code-box .number { color: #b5cea8; }
+        
+        .formula-box {
+            background: linear-gradient(135deg, rgba(30, 77, 123, 0.08) 0%, rgba(212, 165, 116, 0.12) 100%);
+            border: 2px solid var(--blue-ink);
+            border-radius: 6px;
+            padding: 1.5rem;
+            margin: 1rem 0;
+            text-align: center;
+            font-size: 1.2rem;
+            font-weight: 600;
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.05);
+        }
+        
+        .key-concept {
+            background: linear-gradient(135deg, rgba(255, 216, 155, 0.2) 0%, rgba(212, 165, 116, 0.15) 100%);
+            border-left: 5px solid var(--highlight);
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+            border-radius: 0 6px 6px 0;
+        }
+        
+        .key-concept h4 {
+            color: var(--secondary);
+            font-size: 1.3rem;
+            margin-bottom: 1rem;
+            font-family: 'Playfair Display', serif;
+        }
+        
+        .hint-box {
+            background: linear-gradient(135deg, rgba(139, 69, 19, 0.05) 0%, rgba(212, 165, 116, 0.08) 100%);
+            border: 2px dashed var(--secondary);
+            border-radius: 6px;
+            padding: 1.25rem;
+            margin: 1.5rem 0;
+            font-style: italic;
+        }
+        
+        .hint-box::before {
+            content: "💡 Hint: ";
+            font-weight: 700;
+            color: var(--secondary);
+            font-style: normal;
+        }
+        
+        .warning-box {
+            background: linear-gradient(135deg, rgba(160, 82, 45, 0.08) 0%, rgba(212, 165, 116, 0.1) 100%);
+            border: 2px solid var(--red-ink);
+            border-radius: 6px;
+            padding: 1.25rem;
+            margin: 1.5rem 0;
+        }
+        
+        .warning-box::before {
+            content: "⚠️ Warning: ";
+            font-weight: 700;
+            color: var(--red-ink);
+        }
+        
+        .complexity-badge {
+            display: inline-block;
+            padding: 0.5rem 1rem;
+            background: var(--blue-ink);
+            color: white;
+            border-radius: 20px;
+            font-weight: 600;
+            font-size: 0.95rem;
+            margin: 0.5rem 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Data Structures I</h1>
+            <p class="subtitle">Arrays & Linked Lists</p>
+        </div>
+        
+        <div class="intro">
+            <strong>Welcome!</strong> Master the foundational linear data structures: arrays and linked lists. Understand their operations, time complexity, and when to use each.
+        </div>
+        
+        <!-- Question 1 -->
+        <div class="question-card" id="q1">
+            <span class="question-number">1</span>
+            <h2 class="question-title">Array vs Linked List: Finding Middle Element</h2>
+            <div class="question-text">
+                Given a data structure with n elements, find the middle element. Compare the approaches for arrays vs linked lists.
+            </div>
+            <div class="approach-tabs">
+                <button class="tab-button active" onclick="showApproach('q1', 1)">Array Approach</button>
+                <button class="tab-button" onclick="showApproach('q1', 2)">Linked List Approach</button>
+                <button class="tab-button" onclick="showApproach('q1', 3)">Comparison</button>
+            </div>
+            <div class="approach-content active" id="q1-approach1">
+                <h3 style="color: var(--blue-ink); margin-bottom: 1rem;">Approach 1: Array Implementation</h3>
+                <div class="step">
+                    <span class="step-number">1</span>
+                    <div class="step-title">Direct Index Access</div>
+                    <p>Arrays provide O(1) access to any element by index. Finding the middle is trivial:</p>
+                    <div class="code-box"><span class="keyword">def</span> <span class="function">find_middle_array</span>(arr):
+    <span class="comment"># Get length and calculate middle index</span>
+    n = <span class="function">len</span>(arr)
+    middle_index = n // <span class="number">2</span>
+    
+    <span class="comment"># Direct access</span>
+    <span class="keyword">return</span> arr[middle_index]
+
+<span class="comment"># Example</span>
+arr = [<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>]
+result = <span class="function">find_middle_array</span>(arr)  <span class="comment"># Returns 3</span></div>
+                </div>
+                <div class="step">
+                    <span class="step-number">2</span>
+                    <div class="step-title">Complexity Analysis</div>
+                    <p><span class="complexity-badge">Time: O(1)</span> <span class="complexity-badge">Space: O(1)</span></p>
+                    <p>Random access makes this operation constant time - we directly jump to the middle index.</p>
+                </div>
+                <div class="key-concept">
+                    <h4>Key Advantage of Arrays</h4>
+                    <p>Arrays store elements contiguously in memory, allowing O(1) access to any element through index calculation: base_address + (index × element_size)</p>
+                </div>
+            </div>
+            <div class="approach-content" id="q1-approach2">
+                <h3 style="color: var(--blue-ink); margin-bottom: 1rem;">Approach 2: Linked List Implementation</h3>
+                <div class="step">
+                    <span class="step-number">1</span>
+                    <div class="step-title">Two-Pointer Technique</div>
+                    <p>Use slow and fast pointers to find the middle without counting:</p>
+                    <div class="code-box"><span class="keyword">class</span> Node:
+    <span class="keyword">def</span> <span class="function">__init__</span>(<span class="keyword">self</span>, data):
+        <span class="keyword">self</span>.data = data
+        <span class="keyword">self</span>.next = <span class="keyword">None</span>
+
+<span class="keyword">def</span> <span class="function">find_middle_linked_list</span>(head):
+    <span class="keyword">if</span> <span class="keyword">not</span> head:
+        <span class="keyword">return</span> <span class="keyword">None</span>
+    
+    slow = fast = head
+    
+    <span class="comment"># Fast moves 2x speed of slow</span>
+    <span class="keyword">while</span> fast <span class="keyword">and</span> fast.next:
+        slow = slow.next
+        fast = fast.next.next
+    
+    <span class="comment"># When fast reaches end, slow is at middle</span>
+    <span class="keyword">return</span> slow.data</div>
+                </div>
+                <div class="step">
+                    <span class="step-number">2</span>
+                    <div class="step-title">Why This Works</div>
+                    <p>When the fast pointer reaches the end, it has traveled 2n steps. The slow pointer has traveled n steps, placing it exactly at the middle.</p>
+                    <div class="formula-box">
+                        $$	ext{When } fast = 	ext{end}, 	ext{ then } slow = rac{n}{2}$$
+                    </div>
+                </div>
+                <div class="step">
+                    <span class="step-number">3</span>
+                    <div class="step-title">Complexity Analysis</div>
+                    <p><span class="complexity-badge">Time: O(n)</span> <span class="complexity-badge">Space: O(1)</span></p>
+                    <p>We must traverse half the list, but use only two pointers (constant space).</p>
+                </div>
+                <div class="hint-box">
+                    The two-pointer technique is a common pattern in linked list problems. Master it for interviews!
+                </div>
+            </div>
+            <div class="approach-content" id="q1-approach3">
+                <h3 style="color: var(--blue-ink); margin-bottom: 1rem;">Approach 3: Comparison & Trade-offs</h3>
+                <div class="key-concept">
+                    <h4>Performance Comparison</h4>
+                    <table style="width: 100%; border-collapse: collapse; margin-top: 1rem;">
+                        <tr style="background: var(--accent); color: var(--primary);">
+                            <th style="padding: 0.75rem; border: 1px solid var(--secondary);">Operation</th>
+                            <th style="padding: 0.75rem; border: 1px solid var(--secondary);">Array</th>
+                            <th style="padding: 0.75rem; border: 1px solid var(--secondary);">Linked List</th>
+                        </tr>
+                        <tr>
+                            <td style="padding: 0.75rem; border: 1px solid var(--accent);">Find Middle</td>
+                            <td style="padding: 0.75rem; border: 1px solid var(--accent);"><strong>O(1)</strong></td>
+                            <td style="padding: 0.75rem; border: 1px solid var(--accent);">O(n)</td>
+                        </tr>
+                        <tr>
+                            <td style="padding: 0.75rem; border: 1px solid var(--accent);">Insert at Beginning</td>
+                            <td style="padding: 0.75rem; border: 1px solid var(--accent);">O(n)</td>
+                            <td style="padding: 0.75rem; border: 1px solid var(--accent);"><strong>O(1)</strong></td>
+                        </tr>
+                        <tr>
+                            <td style="padding: 0.75rem; border: 1px solid var(--accent);">Delete at Middle</td>
+                            <td style="padding: 0.75rem; border: 1px solid var(--accent);">O(n)</td>
+                            <td style="padding: 0.75rem; border: 1px solid var(--accent);">O(n)</td>
+                        </tr>
+                        <tr>
+                            <td style="padding: 0.75rem; border: 1px solid var(--accent);">Memory</td>
+                            <td style="padding: 0.75rem; border: 1px solid var(--accent);"><strong>Contiguous</strong></td>
+                            <td style="padding: 0.75rem; border: 1px solid var(--accent);">Scattered</td>
+                        </tr>
+                    </table>
+                </div>
+                <div class="warning-box">
+                    Cache performance matters! Arrays benefit from spatial locality, making them faster in practice even when Big-O suggests otherwise.
+                </div>
+            </div>
+        </div>
+
+        <!-- Question 2 -->
+        <div class="question-card" id="q2">
+            <span class="question-number">2</span>
+            <h2 class="question-title">Reversing a Linked List</h2>
+            <div class="question-text">
+                Reverse a singly linked list. Return the new head of the reversed list.
+            </div>
+            <div class="approach-tabs">
+                <button class="tab-button active" onclick="showApproach('q2', 1)">Iterative</button>
+                <button class="tab-button" onclick="showApproach('q2', 2)">Recursive</button>
+                <button class="tab-button" onclick="showApproach('q2', 3)">Stack-Based</button>
+            </div>
+            <div class="approach-content active" id="q2-approach1">
+                <h3 style="color: var(--blue-ink); margin-bottom: 1rem;">Approach 1: Iterative (Three Pointers)</h3>
+                <div class="step">
+                    <span class="step-number">1</span>
+                    <div class="step-title">Setup Three Pointers</div>
+                    <p>Track previous, current, and next nodes:</p>
+                    <div class="code-box"><span class="keyword">def</span> <span class="function">reverse_list</span>(head):
+    prev = <span class="keyword">None</span>
+    current = head
+    
+    <span class="keyword">while</span> current:
+        <span class="comment"># Save next node</span>
+        next_node = current.next
+        
+        <span class="comment"># Reverse the link</span>
+        current.next = prev
+        
+        <span class="comment"># Move pointers forward</span>
+        prev = current
+        current = next_node
+    
+    <span class="comment"># prev is now the new head</span>
+    <span class="keyword">return</span> prev</div>
+                </div>
+                <div class="step">
+                    <span class="step-number">2</span>
+                    <div class="step-title">Visualization</div>
+                    <p>Original: 1 → 2 → 3 → 4 → None</p>
+                    <p>After reversal: None ← 1 ← 2 ← 3 ← 4</p>
+                    <p>Result: 4 → 3 → 2 → 1 → None</p>
+                </div>
+                <div class="step">
+                    <span class="step-number">3</span>
+                    <div class="step-title">Complexity</div>
+                    <p><span class="complexity-badge">Time: O(n)</span> <span class="complexity-badge">Space: O(1)</span></p>
+                    <p>Visit each node once, use only three pointers.</p>
+                </div>
+                <div class="hint-box">
+                    Draw diagrams when solving linked list problems - visualizing pointer movements is crucial!
+                </div>
+            </div>
+            <div class="approach-content" id="q2-approach2">
+                <h3 style="color: var(--blue-ink); margin-bottom: 1rem;">Approach 2: Recursive</h3>
+                <div class="step">
+                    <span class="step-number">1</span>
+                    <div class="step-title">Recursive Solution</div>
+                    <p>Use the call stack to reverse:</p>
+                    <div class="code-box"><span class="keyword">def</span> <span class="function">reverse_list_recursive</span>(head):
+    <span class="comment"># Base cases</span>
+    <span class="keyword">if</span> <span class="keyword">not</span> head <span class="keyword">or</span> <span class="keyword">not</span> head.next:
+        <span class="keyword">return</span> head
+    
+    <span class="comment"># Recursive call</span>
+    new_head = <span class="function">reverse_list_recursive</span>(head.next)
+    
+    <span class="comment"># Reverse the link</span>
+    head.next.next = head
+    head.next = <span class="keyword">None</span>
+    
+    <span class="keyword">return</span> new_head</div>
+                </div>
+                <div class="step">
+                    <span class="step-number">2</span>
+                    <div class="step-title">How It Works</div>
+                    <p>The recursion goes to the end of the list, then unwinds, reversing links on the way back:</p>
+                    <ol>
+                        <li>Recurse to the last node (new head)</li>
+                        <li>On return, reverse current node's link</li>
+                        <li>Set current.next = None to avoid cycles</li>
+                        <li>Return new head through all calls</li>
+                    </ol>
+                </div>
+                <div class="step">
+                    <span class="step-number">3</span>
+                    <div class="step-title">Complexity</div>
+                    <p><span class="complexity-badge">Time: O(n)</span> <span class="complexity-badge">Space: O(n)</span></p>
+                    <p>Space is O(n) due to recursion call stack.</p>
+                </div>
+                <div class="warning-box">
+                    Recursive solutions are elegant but use O(n) stack space. For very large lists, iterative is safer.
+                </div>
+            </div>
+            <div class="approach-content" id="q2-approach3">
+                <h3 style="color: var(--blue-ink); margin-bottom: 1rem;">Approach 3: Stack-Based</h3>
+                <div class="step">
+                    <span class="step-number">1</span>
+                    <div class="step-title">Using a Stack</div>
+                    <p>Push all nodes onto a stack, then rebuild:</p>
+                    <div class="code-box"><span class="keyword">def</span> <span class="function">reverse_list_stack</span>(head):
+    <span class="keyword">if</span> <span class="keyword">not</span> head:
+        <span class="keyword">return</span> <span class="keyword">None</span>
+    
+    <span class="comment"># Push all nodes to stack</span>
+    stack = []
+    current = head
+    <span class="keyword">while</span> current:
+        stack.append(current)
+        current = current.next
+    
+    <span class="comment"># Pop and rebuild</span>
+    new_head = stack.pop()
+    current = new_head
+    
+    <span class="keyword">while</span> stack:
+        current.next = stack.pop()
+        current = current.next
+    
+    current.next = <span class="keyword">None</span>  <span class="comment"># Important!</span>
+    <span class="keyword">return</span> new_head</div>
+                </div>
+                <div class="step">
+                    <span class="step-number">2</span>
+                    <div class="step-title">Complexity</div>
+                    <p><span class="complexity-badge">Time: O(n)</span> <span class="complexity-badge">Space: O(n)</span></p>
+                    <p>Two passes through the list, O(n) space for the stack.</p>
+                </div>
+                <div class="key-concept">
+                    <h4>When to Use Each Method</h4>
+                    <p><strong>Iterative:</strong> Best for production - O(1) space, fastest</p>
+                    <p><strong>Recursive:</strong> Clean and elegant for interviews, educational</p>
+                    <p><strong>Stack:</strong> Demonstrates stack LIFO property, rarely optimal</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Question 3 -->
+        <div class="question-card" id="q3">
+            <span class="question-number">3</span>
+            <h2 class="question-title">Detecting Cycles in a Linked List</h2>
+            <div class="question-text">
+                Determine if a linked list has a cycle. If yes, find the starting node of the cycle.
+            </div>
+            <div class="approach-tabs">
+                <button class="tab-button active" onclick="showApproach('q3', 1)">Floyd's Algorithm</button>
+                <button class="tab-button" onclick="showApproach('q3', 2)">Hash Set</button>
+                <button class="tab-button" onclick="showApproach('q3', 3)">Finding Cycle Start</button>
+            </div>
+            <div class="approach-content active" id="q3-approach1">
+                <h3 style="color: var(--blue-ink); margin-bottom: 1rem;">Approach 1: Floyd's Cycle Detection (Tortoise & Hare)</h3>
+                <div class="step">
+                    <span class="step-number">1</span>
+                    <div class="step-title">Two-Pointer Technique</div>
+                    <p>Use slow and fast pointers:</p>
+                    <div class="code-box"><span class="keyword">def</span> <span class="function">has_cycle</span>(head):
+    <span class="keyword">if</span> <span class="keyword">not</span> head <span class="keyword">or</span> <span class="keyword">not</span> head.next:
+        <span class="keyword">return</span> <span class="keyword">False</span>
+    
+    slow = head
+    fast = head
+    
+    <span class="keyword">while</span> fast <span class="keyword">and</span> fast.next:
+        slow = slow.next           <span class="comment"># Move 1 step</span>
+        fast = fast.next.next      <span class="comment"># Move 2 steps</span>
+        
+        <span class="keyword">if</span> slow == fast:
+            <span class="keyword">return</span> <span class="keyword">True</span>  <span class="comment"># Cycle detected!</span>
+    
+    <span class="keyword">return</span> <span class="keyword">False</span>  <span class="comment"># No cycle</span></div>
+                </div>
+                <div class="step">
+                    <span class="step-number">2</span>
+                    <div class="step-title">Why This Works</div>
+                    <p>If there's a cycle, the fast pointer will eventually catch up to the slow pointer inside the cycle. Think of it like runners on a circular track - the faster runner will lap the slower one.</p>
+                    <div class="formula-box">
+                        If cycle exists: slow and fast will meet in at most 2 × cycle_length iterations
+                    </div>
+                </div>
+                <div class="step">
+                    <span class="step-number">3</span>
+                    <div class="step-title">Complexity</div>
+                    <p><span class="complexity-badge">Time: O(n)</span> <span class="complexity-badge">Space: O(1)</span></p>
+                    <p>Optimal solution - linear time, constant space!</p>
+                </div>
+                <div class="key-concept">
+                    <h4>Floyd's Cycle Detection</h4>
+                    <p>Also called "tortoise and hare algorithm". The key insight: if there's a cycle, a pointer moving at 2x speed will eventually catch a pointer moving at 1x speed.</p>
+                </div>
+            </div>
+            <div class="approach-content" id="q3-approach2">
+                <h3 style="color: var(--blue-ink); margin-bottom: 1rem;">Approach 2: Hash Set</h3>
+                <div class="step">
+                    <span class="step-number">1</span>
+                    <div class="step-title">Track Visited Nodes</div>
+                    <div class="code-box"><span class="keyword">def</span> <span class="function">has_cycle_hashset</span>(head):
+    visited = <span class="function">set</span>()
+    current = head
+    
+    <span class="keyword">while</span> current:
+        <span class="keyword">if</span> current <span class="keyword">in</span> visited:
+            <span class="keyword">return</span> <span class="keyword">True</span>  <span class="comment"># Cycle found!</span>
+        
+        visited.add(current)
+        current = current.next
+    
+    <span class="keyword">return</span> <span class="keyword">False</span></div>
+                </div>
+                <div class="step">
+                    <span class="step-number">2</span>
+                    <div class="step-title">Complexity</div>
+                    <p><span class="complexity-badge">Time: O(n)</span> <span class="complexity-badge">Space: O(n)</span></p>
+                    <p>Simple but uses extra memory for the set.</p>
+                </div>
+                <div class="hint-box">
+                    Hash set approach is intuitive and easier to code, but Floyd's algorithm is preferred in interviews for O(1) space.
+                </div>
+            </div>
+            <div class="approach-content" id="q3-approach3">
+                <h3 style="color: var(--blue-ink); margin-bottom: 1rem;">Approach 3: Finding Cycle Start Node</h3>
+                <div class="step">
+                    <span class="step-number">1</span>
+                    <div class="step-title">Extended Floyd's Algorithm</div>
+                    <p>After detecting cycle, find where it begins:</p>
+                    <div class="code-box"><span class="keyword">def</span> <span class="function">detect_cycle_start</span>(head):
+    <span class="keyword">if</span> <span class="keyword">not</span> head <span class="keyword">or</span> <span class="keyword">not</span> head.next:
+        <span class="keyword">return</span> <span class="keyword">None</span>
+    
+    <span class="comment"># Phase 1: Detect cycle</span>
+    slow = fast = head
+    <span class="keyword">while</span> fast <span class="keyword">and</span> fast.next:
+        slow = slow.next
+        fast = fast.next.next
+        <span class="keyword">if</span> slow == fast:
+            <span class="keyword">break</span>
+    <span class="keyword">else</span>:
+        <span class="keyword">return</span> <span class="keyword">None</span>  <span class="comment"># No cycle</span>
+    
+    <span class="comment"># Phase 2: Find cycle start</span>
+    slow = head
+    <span class="keyword">while</span> slow != fast:
+        slow = slow.next
+        fast = fast.next
+    
+    <span class="keyword">return</span> slow  <span class="comment"># Cycle start node</span></div>
+                </div>
+                <div class="step">
+                    <span class="step-number">2</span>
+                    <div class="step-title">Mathematical Proof</div>
+                    <p>Let's prove why this works:</p>
+                    <ul>
+                        <li>Let L = distance from head to cycle start</li>
+                        <li>Let C = cycle length</li>
+                        <li>When they meet, slow traveled L + a, fast traveled L + a + nC</li>
+                        <li>Since fast = 2 × slow: L + a + nC = 2(L + a)</li>
+                        <li>Simplifying: L = nC - a</li>
+                        <li>Therefore, L steps from head = L steps from meeting point = cycle start!</li>
+                    </ul>
+                </div>
+                <div class="step">
+                    <span class="step-number">3</span>
+                    <div class="step-title">Complexity</div>
+                    <p><span class="complexity-badge">Time: O(n)</span> <span class="complexity-badge">Space: O(1)</span></p>
+                </div>
+                <div class="key-concept">
+                    <h4>Beautiful Mathematical Insight</h4>
+                    <p>The distance from head to cycle start equals the distance from meeting point to cycle start. This elegant property makes the algorithm work!</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Continue with more questions... I'll add a few more key ones -->
+        
+        <div class="question-card" id="q4">
+            <span class="question-number">4</span>
+            <h2 class="question-title">Dynamic Array Implementation</h2>
+            <div class="question-text">
+                Implement a dynamic array that grows automatically when capacity is reached. Include append(), insert(), and delete() operations.
+            </div>
+            <div class="approach-tabs">
+                <button class="tab-button active" onclick="showApproach('q4', 1)">Basic Implementation</button>
+                <button class="tab-button" onclick="showApproach('q4', 2)">Amortized Analysis</button>
+            </div>
+            <div class="approach-content active" id="q4-approach1">
+                <h3 style="color: var(--blue-ink); margin-bottom: 1rem;">Approach 1: Dynamic Array Class</h3>
+                <div class="step">
+                    <span class="step-number">1</span>
+                    <div class="step-title">Implementation</div>
+                    <div class="code-box"><span class="keyword">class</span> DynamicArray:
+    <span class="keyword">def</span> <span class="function">__init__</span>(<span class="keyword">self</span>):
+        <span class="keyword">self</span>.capacity = <span class="number">2</span>
+        <span class="keyword">self</span>.size = <span class="number">0</span>
+        <span class="keyword">self</span>.array = [<span class="keyword">None</span>] * <span class="keyword">self</span>.capacity
+    
+    <span class="keyword">def</span> <span class="function">_resize</span>(<span class="keyword">self</span>):
+        <span class="comment"># Double the capacity</span>
+        <span class="keyword">self</span>.capacity *= <span class="number">2</span>
+        new_array = [<span class="keyword">None</span>] * <span class="keyword">self</span>.capacity
+        
+        <span class="comment"># Copy elements</span>
+        <span class="keyword">for</span> i <span class="keyword">in</span> <span class="function">range</span>(<span class="keyword">self</span>.size):
+            new_array[i] = <span class="keyword">self</span>.array[i]
+        
+        <span class="keyword">self</span>.array = new_array
+    
+    <span class="keyword">def</span> <span class="function">append</span>(<span class="keyword">self</span>, value):
+        <span class="comment"># Resize if needed</span>
+        <span class="keyword">if</span> <span class="keyword">self</span>.size == <span class="keyword">self</span>.capacity:
+            <span class="keyword">self</span>.<span class="function">_resize</span>()
+        
+        <span class="keyword">self</span>.array[<span class="keyword">self</span>.size] = value
+        <span class="keyword">self</span>.size += <span class="number">1</span>
+    
+    <span class="keyword">def</span> <span class="function">insert</span>(<span class="keyword">self</span>, index, value):
+        <span class="keyword">if</span> index < <span class="number">0</span> <span class="keyword">or</span> index > <span class="keyword">self</span>.size:
+            <span class="keyword">raise</span> <span class="function">IndexError</span>(<span class="string">"Index out of bounds"</span>)
+        
+        <span class="keyword">if</span> <span class="keyword">self</span>.size == <span class="keyword">self</span>.capacity:
+            <span class="keyword">self</span>.<span class="function">_resize</span>()
+        
+        <span class="comment"># Shift elements right</span>
+        <span class="keyword">for</span> i <span class="keyword">in</span> <span class="function">range</span>(<span class="keyword">self</span>.size, index, -<span class="number">1</span>):
+            <span class="keyword">self</span>.array[i] = <span class="keyword">self</span>.array[i - <span class="number">1</span>]
+        
+        <span class="keyword">self</span>.array[index] = value
+        <span class="keyword">self</span>.size += <span class="number">1</span>
+    
+    <span class="keyword">def</span> <span class="function">delete</span>(<span class="keyword">self</span>, index):
+        <span class="keyword">if</span> index < <span class="number">0</span> <span class="keyword">or</span> index >= <span class="keyword">self</span>.size:
+            <span class="keyword">raise</span> <span class="function">IndexError</span>(<span class="string">"Index out of bounds"</span>)
+        
+        <span class="comment"># Shift elements left</span>
+        <span class="keyword">for</span> i <span class="keyword">in</span> <span class="function">range</span>(index, <span class="keyword">self</span>.size - <span class="number">1</span>):
+            <span class="keyword">self</span>.array[i] = <span class="keyword">self</span>.array[i + <span class="number">1</span>]
+        
+        <span class="keyword">self</span>.size -= <span class="number">1</span>
+        <span class="keyword">self</span>.array[<span class="keyword">self</span>.size] = <span class="keyword">None</span>  <span class="comment"># Clear reference</span></div>
+                </div>
+                <div class="step">
+                    <span class="step-number">2</span>
+                    <div class="step-title">Complexity</div>
+                    <p><span class="complexity-badge">Append: O(1) amortized</span></p>
+                    <p><span class="complexity-badge">Insert: O(n)</span></p>
+                    <p><span class="complexity-badge">Delete: O(n)</span></p>
+                </div>
+            </div>
+            <div class="approach-content" id="q4-approach2">
+                <h3 style="color: var(--blue-ink); margin-bottom: 1rem;">Approach 2: Amortized Analysis</h3>
+                <div class="step">
+                    <span class="step-number">1</span>
+                    <div class="step-title">Understanding Amortization</div>
+                    <p>Although resize is O(n), it happens infrequently. Let's analyze the cost:</p>
+                    <ul>
+                        <li>Starting capacity: 2</li>
+                        <li>Resize at insertions: 2, 4, 8, 16, 32, ...</li>
+                        <li>Cost to resize to size n: n (copy all elements)</li>
+                        <li>Total cost for n operations: n + n/2 + n/4 + ... + 2 + 1</li>
+                    </ul>
+                </div>
+                <div class="step">
+                    <span class="step-number">2</span>
+                    <div class="step-title">Geometric Series</div>
+                    <div class="formula-box">
+                        $$	ext{Total cost} = n \left(1 + rac{1}{2} + rac{1}{4} + \cdots ight) < 2n$$
+                        $$	ext{Amortized cost per operation} = rac{2n}{n} = O(1)$$
+                    </div>
+                </div>
+                <div class="key-concept">
+                    <h4>Why Doubling Strategy Works</h4>
+                    <p>Doubling capacity ensures that expensive resize operations are rare enough to maintain O(1) amortized time. Growing by a constant factor (not addition) is key!</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="intro" style="margin-top: 3rem; border-left-color: var(--blue-ink);">
+            <strong>Summary:</strong> Arrays provide O(1) random access but expensive insertion/deletion. Linked lists offer O(1) insertion/deletion but O(n) access. Choose based on your use case!
+        </div>
+    </div>
+    
+    <script>
+        function showApproach(question, approachNum) {
+            const approaches = document.querySelectorAll(`#${question} .approach-content`);
+            approaches.forEach(a => a.classList.remove('active'));
+            
+            const tabs = document.querySelectorAll(`#${question} .tab-button`);
+            tabs.forEach(t => t.classList.remove('active'));
+            
+            document.getElementById(`${question}-approach${approachNum}`).classList.add('active');
+            event.target.classList.add('active');
+            
+            if (window.MathJax) {
+                MathJax.typesetPromise();
+            }
+        }
+        
+        document.addEventListener('DOMContentLoaded', function() {
+            if (window.MathJax) {
+                MathJax.typesetPromise();
+            }
+        });
+    </script>
+</body>
+</html>
